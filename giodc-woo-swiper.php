@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: Giodc Woo Swiper
- * Plugin URI: https://example.com/giodc-woo-swiper
+ * Plugin URI: https://github.com/giodc/giodc-woo-swiper
  * Description: WooCommerce product shortcodes displayed in Swiper JS carousel.
  * Version: 1.0.0
- * Author: Giodc
- * Author URI: https://example.com
+ * Author: Giovanni De Carlo
+ * Author URI: https://giodc.com
  * Text Domain: giodc-woo-swiper
  * Domain Path: /languages
  * WC requires at least: 3.0.0
@@ -69,11 +69,31 @@ class Giodc_Woo_Swiper {
         // Load plugin text domain
         add_action('plugins_loaded', array($this, 'load_plugin_textdomain'));
         
+        // Initialize the plugin
+        $this->init();
+    }
+
+    /**
+     * Initialize the plugin
+     */
+    public function init() {
+        // Register shortcodes
+        $this->register_shortcodes();
+        
         // Enqueue scripts and styles
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         
-        // Register shortcodes
-        add_action('init', array($this, 'register_shortcodes'));
+        // Declare HPOS compatibility
+        add_action('before_woocommerce_init', array($this, 'declare_hpos_compatibility'));
+    }
+    
+    /**
+     * Declare compatibility with WooCommerce HPOS (High-Performance Order Storage)
+     */
+    public function declare_hpos_compatibility() {
+        if (class_exists('\Automattic\WooCommerce\Utilities\FeaturesUtil')) {
+            \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility('custom_order_tables', __FILE__, true);
+        }
     }
 
     /**
@@ -112,6 +132,7 @@ class Giodc_Woo_Swiper {
         add_shortcode('giodc_products_by_tag', array($this, 'products_by_tag_shortcode'));
         add_shortcode('giodc_products_by_tags', array($this, 'products_by_tags_shortcode'));
         add_shortcode('giodc_popular_products', array($this, 'popular_products_shortcode'));
+        add_shortcode('giodc_featured_products', array($this, 'featured_products_shortcode'));
     }
 
     /**
@@ -127,10 +148,11 @@ class Giodc_Woo_Swiper {
             'desktop_columns' => '5',
             'tablet_columns' => '4',
             'mobile_columns' => '2',
+            'hide_dots' => 'no',
             'orderby' => 'date',
             'order' => 'desc',
         ), $atts, 'giodc_new_products');
-
+        
         return $this->render_products_swiper($atts, 'new');
     }
 
@@ -147,10 +169,11 @@ class Giodc_Woo_Swiper {
             'desktop_columns' => '5',
             'tablet_columns' => '4',
             'mobile_columns' => '2',
+            'hide_dots' => 'no',
             'orderby' => 'date',
             'order' => 'desc',
         ), $atts, 'giodc_back_in_stock');
-
+        
         return $this->render_products_swiper($atts, 'back_in_stock');
     }
 
@@ -167,10 +190,11 @@ class Giodc_Woo_Swiper {
             'desktop_columns' => '5',
             'tablet_columns' => '4',
             'mobile_columns' => '2',
+            'hide_dots' => 'no',
             'orderby' => 'date',
             'order' => 'desc',
         ), $atts, 'giodc_discounted_products');
-
+        
         return $this->render_products_swiper($atts, 'discounted');
     }
 
@@ -187,11 +211,12 @@ class Giodc_Woo_Swiper {
             'desktop_columns' => '5',
             'tablet_columns' => '4',
             'mobile_columns' => '2',
+            'hide_dots' => 'no',
             'orderby' => 'date',
             'order' => 'desc',
             'category' => '',
         ), $atts, 'giodc_products_by_category');
-
+        
         return $this->render_products_swiper($atts, 'category');
     }
 
@@ -208,11 +233,12 @@ class Giodc_Woo_Swiper {
             'desktop_columns' => '5',
             'tablet_columns' => '4',
             'mobile_columns' => '2',
+            'hide_dots' => 'no',
             'orderby' => 'date',
             'order' => 'desc',
             'tag' => '',
         ), $atts, 'giodc_products_by_tag');
-
+        
         return $this->render_products_swiper($atts, 'tag');
     }
 
@@ -229,10 +255,11 @@ class Giodc_Woo_Swiper {
             'desktop_columns' => '5',
             'tablet_columns' => '4',
             'mobile_columns' => '2',
+            'hide_dots' => 'no',
             'orderby' => 'date',
             'order' => 'desc',
             'tags' => '',
-            'operator' => 'IN', // Can be 'IN', 'AND', or 'NOT IN'
+            'operator' => 'IN',
         ), $atts, 'giodc_products_by_tags');
         
         // Debug information
@@ -261,6 +288,24 @@ class Giodc_Woo_Swiper {
         error_log('Giodc Woo Swiper - Popular products shortcode called with: ' . print_r($atts, true));
         
         return $this->render_products_swiper($atts, 'popular');
+    }
+
+    /**
+     * Featured products shortcode
+     */
+    public function featured_products_shortcode($atts) {
+        $atts = shortcode_atts(array(
+            'limit' => '12',
+            'columns' => '5',
+            'desktop_columns' => '5',
+            'tablet_columns' => '4',
+            'mobile_columns' => '2',
+            'hide_dots' => 'no',
+            'orderby' => 'date',
+            'order' => 'desc',
+        ), $atts, 'giodc_featured_products');
+        
+        return $this->render_products_swiper($atts, 'featured');
     }
 
     /**
@@ -388,6 +433,17 @@ class Giodc_Woo_Swiper {
                     error_log('Giodc Woo Swiper - Limiting popular products to last ' . intval($atts['days']) . ' days');
                 }
                 break;
+                
+            case 'featured':
+                // Featured products
+                $args['tax_query'] = array(
+                    array(
+                        'taxonomy' => 'product_visibility',
+                        'field'    => 'name',
+                        'terms'    => 'featured',
+                    ),
+                );
+                break;
         }
 
         // Get products
@@ -411,12 +467,14 @@ class Giodc_Woo_Swiper {
             $mobile_columns = intval($atts['mobile_columns']) ?: 2;
             $tablet_columns = intval($atts['tablet_columns']) ?: 4;
             $desktop_columns = intval($atts['desktop_columns']) ?: 5;
+            $hide_dots = ($atts['hide_dots'] === 'yes') ? 'true' : 'false';
             ?>
             <div class="giodc-woo-swiper-container">
                 <div class="swiper <?php echo esc_attr($swiper_id); ?>" 
-                     data-mobile-columns="<?php echo esc_attr($mobile_columns); ?>" 
-                     data-tablet-columns="<?php echo esc_attr($tablet_columns); ?>" 
-                     data-desktop-columns="<?php echo esc_attr($desktop_columns); ?>">
+                     data-mobile-columns="<?php echo esc_attr($mobile_columns); ?>"
+                     data-tablet-columns="<?php echo esc_attr($tablet_columns); ?>"
+                     data-desktop-columns="<?php echo esc_attr($desktop_columns); ?>"
+                     data-hide-dots="<?php echo esc_attr($hide_dots); ?>">
                     <div class="swiper-wrapper">
                         <?php
                         while ($products->have_posts()) : $products->the_post();

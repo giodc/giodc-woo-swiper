@@ -20,15 +20,12 @@
             var mobileColumns = parseInt($container.data('mobile-columns') || 2);
             var tabletColumns = parseInt($container.data('tablet-columns') || 4);
             var desktopColumns = parseInt($container.data('desktop-columns') || 5);
+            var hideDots = $container.data('hide-dots') === 'true' || $container.attr('data-hide-dots') === 'true';
             
             // Initialize this Swiper instance
             new Swiper('.' + containerId, {
                 slidesPerView: mobileColumns, // Mobile default
-                spaceBetween: 20,
-                pagination: {
-                    el: '.' + containerId + ' .swiper-pagination',
-                    clickable: true,
-                },
+                spaceBetween: 5,
                 navigation: {
                     nextEl: '.' + containerId + ' .swiper-button-next',
                     prevEl: '.' + containerId + ' .swiper-button-prev',
@@ -40,7 +37,11 @@
                     1024: {
                         slidesPerView: desktopColumns, // Desktop
                     }
-                }
+                },
+                pagination: hideDots ? false : {
+                    el: '.' + containerId + ' .swiper-pagination',
+                    clickable: true,
+                },
             });
         });
         

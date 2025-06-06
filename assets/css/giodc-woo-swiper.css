@@ -1,3 +1,5 @@
+GitHub Plugin URI: https://github.com/giodc/giodc-woo-swiper
+
 /**
  * Giodc Woo Swiper CSS
  */
@@ -8,7 +10,7 @@
 }
 
 .giodc-woo-swiper-container .swiper {
-    padding: 0 40px;
+   
 }
 
 .giodc-woo-swiper-product {
@@ -20,9 +22,7 @@
     flex-direction: column;
 }
 
-.giodc-woo-swiper-product:hover {
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
+
 
 .giodc-woo-swiper-product a {
     text-decoration: none;
@@ -38,15 +38,17 @@
     transition: transform 0.3s ease;
 }
 
-.giodc-woo-swiper-product:hover img {
-    transform: scale(1.05);
-}
+
 
 .giodc-woo-swiper-product h3 {
     font-size: 16px;
     margin: 10px 0;
     font-weight: 500;
     color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    display: block;
+    text-overflow: ellipsis;
 }
 
 .giodc-woo-swiper-product .price {

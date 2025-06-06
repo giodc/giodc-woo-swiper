@@ -3,7 +3,7 @@
  * Plugin Name: Giodc Woo Swiper
  * Plugin URI: https://github.com/giodc/giodc-woo-swiper
  * Description: WooCommerce product shortcodes displayed in Swiper JS carousel.
- * Version: 1.0.3
+ * Version: 1.0.4
  * Author: Giovanni De Carlo
  * Author URI: https://giodc.com
  * Text Domain: giodc-woo-swiper

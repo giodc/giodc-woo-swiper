@@ -184,6 +184,12 @@ The plugin includes filters that allow developers to modify the behavior:
 
 ## Changelog
 
+### 1.0.4
+- Minor bug fixes and improvements
+
+### 1.0.3
+- Minor bug fixes and improvements
+
 ### 1.0.2
 - Added option to hide pagination dots with `hide_dots="yes"` parameter
 - Fixed compatibility with WooCommerce's AJAX add-to-cart functionality

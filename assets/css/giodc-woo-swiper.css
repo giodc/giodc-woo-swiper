@@ -10,7 +10,7 @@ GitHub Plugin URI: https://github.com/giodc/giodc-woo-swiper
 }
 
 .giodc-woo-swiper-container .swiper {
-   
+   padding: 0 2rem;
 }
 
 .giodc-woo-swiper-product {

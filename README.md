@@ -184,6 +184,9 @@ The plugin includes filters that allow developers to modify the behavior:
 
 ## Changelog
 
+### 1.0.5
+- Minor bug fixes and improvements
+
 ### 1.0.4
 - Minor bug fixes and improvements
 

@@ -52,7 +52,7 @@
 }
 
 .giodc-woo-swiper-product .price {
-    color: #77a464;
+    color: #000000;
     font-weight: 700;
     margin-bottom: 15px;
 }
@@ -71,7 +71,7 @@
 }
 
 .giodc-woo-swiper-product .button:hover {
-    background-color: #77a464;
+    background-color: #000000;
     color: #ffffff;
 }
 
@@ -111,7 +111,7 @@
 }
 
 .giodc-woo-swiper-container .swiper-pagination-bullet-active {
-    background: #77a464;
+    background: #000000;
 }
 
 /* Responsive Styles */

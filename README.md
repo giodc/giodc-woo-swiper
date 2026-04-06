@@ -25,6 +25,14 @@ Giodc WooCommerce Swiper provides a set of shortcodes to display your WooCommerc
 
 ## Shortcodes
 
+### Pre-Order Products
+
+Display active pre-order products (requires [Pre-Orders for WooCommerce](https://wordpress.org/plugins/pre-orders-for-woocommerce/) plugin). Only products with a future pre-order release date are shown.
+
+```
+[giodc_pre_order_products limit="12" columns="5" orderby="date" order="desc" hide_dots="no"]
+```
+
 ### Featured Products
 
 Display featured products in a swiper carousel.
@@ -100,6 +108,7 @@ All shortcodes accept the following parameters:
 | `orderby` | How to sort the products | `date` | `date`, `price`, `rand`, `title`, `popularity`, `rating` |
 | `order` | Sort order | `desc` | `asc`, `desc` |
 | `hide_dots` | Whether to hide pagination dots | `no` | `yes`, `no` |
+| `pre_order` | Show only active pre-order products (requires Pre-Orders for WooCommerce plugin) | `no` | `yes`, `no` |
 
 ### Additional parameters for specific shortcodes:
 
@@ -152,6 +161,16 @@ The plugin automatically adjusts the number of visible slides based on screen si
 [giodc_top_rated_products limit="10" columns="3"]
 ```
 
+### Display the 6 latest pre-order products
+```
+[giodc_pre_order_products limit="6" columns="4"]
+```
+
+### Display featured products that are also pre-orders
+```
+[giodc_featured_products pre_order="yes" limit="8"]
+```
+
 ## Developers
 
 ### CSS Customization
@@ -183,6 +202,10 @@ The plugin includes filters that allow developers to modify the behavior:
 - Tested with major browsers (Chrome, Firefox, Safari, Edge)
 
 ## Changelog
+
+### 1.0.6
+- Added `giodc_pre_order_products` shortcode to display active pre-order products
+- Added `pre_order="yes"` attribute to all shortcodes to filter results to pre-order products only (requires Pre-Orders for WooCommerce plugin)
 
 ### 1.0.5
 - Minor bug fixes and improvements

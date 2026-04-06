@@ -476,19 +476,12 @@ class Giodc_Woo_Swiper {
                 break;
 
             case 'pre_order':
-                // Active pre-order products (requires Pre-Orders for WooCommerce plugin)
+                // Pre-order products (requires Pre-Orders for WooCommerce plugin)
                 $args['meta_query'] = array(
-                    'relation' => 'AND',
                     array(
                         'key'     => '_is_pre_order',
                         'value'   => 'yes',
                         'compare' => '=',
-                    ),
-                    array(
-                        'key'     => '_pre_order_date',
-                        'value'   => current_time('mysql'),
-                        'compare' => '>',
-                        'type'    => 'DATETIME',
                     ),
                 );
                 break;
@@ -496,29 +489,16 @@ class Giodc_Woo_Swiper {
 
         // Filter by pre-order status (requires Pre-Orders for WooCommerce plugin)
         if (isset($atts['pre_order']) && $atts['pre_order'] === 'yes') {
-            $pre_order_query = array(
-                'relation' => 'AND',
-                array(
-                    'key'     => '_is_pre_order',
-                    'value'   => 'yes',
-                    'compare' => '=',
-                ),
-                array(
-                    'key'     => '_pre_order_date',
-                    'value'   => current_time('mysql'),
-                    'compare' => '>',
-                    'type'    => 'DATETIME',
-                ),
+            $pre_order_meta = array(
+                'key'     => '_is_pre_order',
+                'value'   => 'yes',
+                'compare' => '=',
             );
 
             if (isset($args['meta_query'])) {
-                $args['meta_query'] = array(
-                    'relation' => 'AND',
-                    $args['meta_query'],
-                    $pre_order_query,
-                );
+                $args['meta_query'][] = $pre_order_meta;
             } else {
-                $args['meta_query'] = $pre_order_query;
+                $args['meta_query'] = array( $pre_order_meta );
             }
         }
 

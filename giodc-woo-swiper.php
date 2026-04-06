@@ -3,7 +3,7 @@
  * Plugin Name: Giodc Woo Swiper
  * Plugin URI: https://github.com/giodc/giodc-woo-swiper
  * Description: WooCommerce product shortcodes displayed in Swiper JS carousel.
- * Version: 1.0.5
+ * Version: 1.0.6
  * Author: Giovanni De Carlo
  * Author URI: https://giodc.com
  * Text Domain: giodc-woo-swiper
@@ -151,6 +151,7 @@ class Giodc_Woo_Swiper {
             'hide_dots' => 'no',
             'orderby' => 'date',
             'order' => 'desc',
+            'pre_order' => 'no',
         ), $atts, 'giodc_new_products');
         
         return $this->render_products_swiper($atts, 'new');
@@ -172,6 +173,7 @@ class Giodc_Woo_Swiper {
             'hide_dots' => 'no',
             'orderby' => 'date',
             'order' => 'desc',
+            'pre_order' => 'no',
         ), $atts, 'giodc_back_in_stock');
         
         return $this->render_products_swiper($atts, 'back_in_stock');
@@ -193,6 +195,7 @@ class Giodc_Woo_Swiper {
             'hide_dots' => 'no',
             'orderby' => 'date',
             'order' => 'desc',
+            'pre_order' => 'no',
         ), $atts, 'giodc_discounted_products');
         
         return $this->render_products_swiper($atts, 'discounted');
@@ -215,6 +218,7 @@ class Giodc_Woo_Swiper {
             'orderby' => 'date',
             'order' => 'desc',
             'category' => '',
+            'pre_order' => 'no',
         ), $atts, 'giodc_products_by_category');
         
         return $this->render_products_swiper($atts, 'category');
@@ -237,6 +241,7 @@ class Giodc_Woo_Swiper {
             'orderby' => 'date',
             'order' => 'desc',
             'tag' => '',
+            'pre_order' => 'no',
         ), $atts, 'giodc_products_by_tag');
         
         return $this->render_products_swiper($atts, 'tag');
@@ -260,6 +265,7 @@ class Giodc_Woo_Swiper {
             'order' => 'desc',
             'tags' => '',
             'operator' => 'IN',
+            'pre_order' => 'no',
         ), $atts, 'giodc_products_by_tags');
         
         // Debug information
@@ -282,6 +288,7 @@ class Giodc_Woo_Swiper {
             'tablet_columns' => '4',
             'mobile_columns' => '2',
             'days' => '0', // 0 means all time, otherwise limit to X days
+            'pre_order' => 'no',
         ), $atts, 'giodc_popular_products');
         
         // Debug information
@@ -303,6 +310,7 @@ class Giodc_Woo_Swiper {
             'hide_dots' => 'no',
             'orderby' => 'date',
             'order' => 'desc',
+            'pre_order' => 'no',
         ), $atts, 'giodc_featured_products');
         
         return $this->render_products_swiper($atts, 'featured');
@@ -444,6 +452,34 @@ class Giodc_Woo_Swiper {
                     ),
                 );
                 break;
+        }
+
+        // Filter by pre-order status (requires Pre-Orders for WooCommerce plugin)
+        if (isset($atts['pre_order']) && $atts['pre_order'] === 'yes') {
+            $pre_order_query = array(
+                'relation' => 'AND',
+                array(
+                    'key'     => '_is_pre_order',
+                    'value'   => 'yes',
+                    'compare' => '=',
+                ),
+                array(
+                    'key'     => '_pre_order_date',
+                    'value'   => current_time('mysql'),
+                    'compare' => '>',
+                    'type'    => 'DATETIME',
+                ),
+            );
+
+            if (isset($args['meta_query'])) {
+                $args['meta_query'] = array(
+                    'relation' => 'AND',
+                    $args['meta_query'],
+                    $pre_order_query,
+                );
+            } else {
+                $args['meta_query'] = $pre_order_query;
+            }
         }
 
         // Get products

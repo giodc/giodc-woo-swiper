@@ -133,6 +133,7 @@ class Giodc_Woo_Swiper {
         add_shortcode('giodc_products_by_tags', array($this, 'products_by_tags_shortcode'));
         add_shortcode('giodc_popular_products', array($this, 'popular_products_shortcode'));
         add_shortcode('giodc_featured_products', array($this, 'featured_products_shortcode'));
+        add_shortcode('giodc_pre_order_products', array($this, 'pre_order_products_shortcode'));
     }
 
     /**
@@ -298,6 +299,27 @@ class Giodc_Woo_Swiper {
     }
 
     /**
+     * Pre-order products shortcode
+     *
+     * @param array $atts Shortcode attributes
+     * @return string Shortcode output
+     */
+    public function pre_order_products_shortcode($atts) {
+        $atts = shortcode_atts(array(
+            'limit'           => '12',
+            'columns'         => '5',
+            'desktop_columns' => '5',
+            'tablet_columns'  => '4',
+            'mobile_columns'  => '2',
+            'hide_dots'       => 'no',
+            'orderby'         => 'date',
+            'order'           => 'desc',
+        ), $atts, 'giodc_pre_order_products');
+
+        return $this->render_products_swiper($atts, 'pre_order');
+    }
+
+    /**
      * Featured products shortcode
      */
     public function featured_products_shortcode($atts) {
@@ -449,6 +471,24 @@ class Giodc_Woo_Swiper {
                         'taxonomy' => 'product_visibility',
                         'field'    => 'name',
                         'terms'    => 'featured',
+                    ),
+                );
+                break;
+
+            case 'pre_order':
+                // Active pre-order products (requires Pre-Orders for WooCommerce plugin)
+                $args['meta_query'] = array(
+                    'relation' => 'AND',
+                    array(
+                        'key'     => '_is_pre_order',
+                        'value'   => 'yes',
+                        'compare' => '=',
+                    ),
+                    array(
+                        'key'     => '_pre_order_date',
+                        'value'   => current_time('mysql'),
+                        'compare' => '>',
+                        'type'    => 'DATETIME',
                     ),
                 );
                 break;
